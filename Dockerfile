@@ -1,7 +1,18 @@
-FROM kalilinux/kali-rolling
-RUN apt-get update && apt-get install -y python3 python3-pip
+FROM python:3.11-slim
+
+# نصب پیش‌نیازهای لازم برای کامپایل پکیج‌های پایتونی (Rust و GCC)
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    make \
+    rustc \
+    cargo \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY requirements.txt .
-RUN pip3 install -r requirements.txt --break-system-packages
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
-CMD ["python3", "main.py"]
+CMD ["python", "main.py"]
